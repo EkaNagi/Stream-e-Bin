@@ -5,12 +5,19 @@
 package mitra;
 
 import akun.Akun;
+
+import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.util.*;
+import java.util.List;
+
+import akun.AkunFrame;
+import akun.AkunTableModel;
 import dao.MitraDao;
 import dao.AkunDao;
+import id.ac.unpas.tubes2023.MainFrame;
 
 /**
  *
@@ -33,9 +40,18 @@ public class MitraFrame extends JFrame {
     private AkunDao akunDao;
     
     public MitraFrame(MitraDao mitraDao, AkunDao akunDao){
+        this.setTitle("Stream e-Bin || Identitas Mitra");
 //        deklarasi fungsi ketika app ditutup semua proses yang berjalan akan dibuang
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
+        //      deklarasai borderlayout
+        this.setLayout(new BorderLayout());
+
+        //deklarasi judul aplikasi
+        JLabel judulAplikasi = new JLabel("Identitas Mitra");
+        judulAplikasi.setFont(new Font("Arial", Font.BOLD, 18));
+        judulAplikasi.setBounds(130, 10, 350, 30);
+
 //        deklarasi kelas
         this.mitraDao = mitraDao;
         this.akunDao = akunDao;
@@ -46,46 +62,46 @@ public class MitraFrame extends JFrame {
 //        deklarasi label, text field, combo box
         JLabel labelFotoProfile = new JLabel("Foto Profile: ");
         labelFotoProfile.setBounds(15, 40, 350, 10);
-        
+
         textFieldFotoProfile = new JTextField();
         textFieldFotoProfile.setBounds(15, 60, 350, 30);
-        
+
         JLabel labelAkun = new JLabel("Akun: ");
         labelAkun.setBounds(15, 100, 350, 10);
-        
+
         comboJenis = new JComboBox();
         comboJenis.setBounds(15, 120, 100, 40);
-        
+
         JLabel labelNamaLengkap = new JLabel("Nama Lengkap: ");
         labelNamaLengkap.setBounds(15, 160, 350, 10);
         
         textFieldNamaLengkap = new JTextField();
         textFieldNamaLengkap.setBounds(15, 180, 350, 30);
-        
+
         JLabel labelTanggalLahir = new JLabel("Foto Profile: ");
         labelTanggalLahir.setBounds(15, 220, 350, 10);
         
         textFieldTanggalLahir = new JTextField();
         textFieldTanggalLahir.setBounds(15, 240, 350, 30);
-        
+
         JLabel labelNoRekening = new JLabel("Nomor Rekening: ");
         labelNoRekening.setBounds(15, 280, 350, 10);
         
         textFieldNoRekening = new JTextField();
         textFieldNoRekening.setBounds(15, 300, 350, 30);
-        
+
         JLabel labelAlamatTinggal = new JLabel("AlamatTinggal: ");
         labelAlamatTinggal.setBounds(15, 340, 350, 10);
         
         textFieldAlamatTinggal = new JTextField();
         textFieldAlamatTinggal.setBounds(15, 360, 350, 30);
-        
+
         JLabel labelFotoKtp = new JLabel("Foto KTP: ");
         labelFotoKtp.setBounds(15, 400, 350, 10);
         
         textFieldFotoKtp = new JTextField();
         textFieldFotoKtp.setBounds(15, 420, 350, 30);
-        
+
         JLabel labelFotoKk = new JLabel("Foto KK: ");
         labelFotoKk.setBounds(15, 480, 350, 10);
         
@@ -95,6 +111,10 @@ public class MitraFrame extends JFrame {
 //        deklarasi button simpan
         JButton button = new JButton("Simpan");
         button.setBounds(15, 560, 100, 40);
+
+        //deklarasi button delete
+        JButton buttonDelete = new JButton("Delete");
+        buttonDelete.setBounds(130, 560, 100, 40);
         
 //        deklarasi tabel
         javax.swing.JTable table = new JTable();
@@ -107,12 +127,38 @@ public class MitraFrame extends JFrame {
         
 //        deklarasi pemanggilan kelas button simpan
         MitraButtonSimpanActionListener actionListener = new MitraButtonSimpanActionListener(this, mitraDao);
+
+        //deklarasi button delete
+        buttonDelete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                MitraTableModel tableModel = (MitraTableModel) table.getModel();
+                int selectedRow = table.getSelectedRow(); // Mendapatkan baris yang dipilih
+                int result = JOptionPane.showConfirmDialog(MitraFrame.this, "Apakah Anda yakin ingin Menghapus data ini?", "Konfirmasi Hapus Data", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (result == JOptionPane.YES_OPTION) {
+                    if (selectedRow != -1) {
+                        Mitra mitra = tableModel.getAkunAtRow(selectedRow);
+                        tableModel.removeRow(selectedRow);
+                        JOptionPane.showMessageDialog(MitraFrame.this, "Berhasil Dihapus", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        mitraDao.delete(mitra);
+                    } else {
+                        if (table.getRowCount() == 0) {
+                            JOptionPane.showMessageDialog(MitraFrame.this, "Tabel Kosong.", "Error", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(MitraFrame.this, "Pilih satu baris dari tabel untuk dihapus.", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                }
+
+            }
+        });
         
 //        deklarasi aksi untuk button
         button.addActionListener(actionListener);
         
 //        penambahan komponen yang telah dideklarasikan
+        this.add(judulAplikasi);
         this.add(button);
+        this.add(buttonDelete);
         this.add(textFieldFotoProfile);
         this.add(labelFotoProfile);
         this.add(labelAkun);

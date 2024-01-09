@@ -4,7 +4,7 @@
  */
 package id.ac.unpas.tubes2023;
 
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -43,11 +43,34 @@ public class MainFrame extends javax.swing.JFrame {
      * Creates new form MainFrame
      */
     public MainFrame() {
+        //Judul Aplikasi
+        this.setTitle("Stream e-Bin");
         //        deklarasi fungsi ketika ditutup aplikasi akan berhenti
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                int result = JOptionPane.showConfirmDialog(MainFrame.this, "Apakah Anda yakin ingin keluar dari aplikasi?", "Konfirmasi Keluar", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (result == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
+
+        });
+
         
 //        penyesuaian ukuran aplikasi
-        this.setSize(400, 110);
+        this.setSize(500, 150);
+
+//      deklarasai borderlayout
+        this.setLayout(new BorderLayout());
+
+        //deklarasi judul aplikasi
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JLabel judulAplikasi = new JLabel("Stream e-Bin");
+        judulAplikasi.setFont(new Font("Arial", Font.BOLD, 18));
+        headerPanel.add(judulAplikasi);
         
 //        deklarasi kelas dao
         this.akunDao = new AkunDao();
@@ -59,13 +82,14 @@ public class MainFrame extends javax.swing.JFrame {
         
 //        deklarasi layout
         this.setLayout(new FlowLayout());
+
 //        deklarasi kelas button main
         MainButtonActionListener actionListener = new MainButtonActionListener(this);
         
 //        deklarasi button
         this.buttonAkun = new JButton("Daftar Akun");
         this.buttonMitra = new JButton("Profile Mitra");
-        
+
         JButton buttonPrint = new JButton("Print");
         JButton buttonPreview = new JButton("Preview");
         JButton buttonExport = new JButton("Export");
@@ -151,13 +175,35 @@ public class MainFrame extends javax.swing.JFrame {
                 }
            }
         });
-        
+
+
+        //penambahan komponen ke dalam aplikasi
+//        buttonPanel.add(buttonAkun);
+//        buttonPanel.add(buttonMitra);
+//        buttonPanel.add(buttonPrint);
+//        buttonPanel.add(buttonPreview);
+//        buttonPanel.add(buttonExport);
 //        penambahan komponen ke aplikasi
-        this.add(buttonAkun);
-        this.add(buttonMitra);
-        this.add(buttonPrint);
-        this.add(buttonPreview);
-        this.add(buttonExport);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(buttonAkun);
+        buttonPanel.add(buttonMitra);
+        buttonPanel.add(buttonPrint);
+        buttonPanel.add(buttonPreview);
+        buttonPanel.add(buttonExport);
+
+//        this.add(judulAplikasi);
+//        this.add(buttonAkun);
+//        this.add(buttonMitra);
+//        this.add(buttonPrint);
+//        this.add(buttonPreview);
+//        this.add(buttonExport);
+
+        // Menempatkan panel-header di bagian atas frame
+        this.add(headerPanel, BorderLayout.NORTH);
+
+        // Menempatkan panel-button di bagian tengah frame
+        this.add(buttonPanel, BorderLayout.CENTER);
     }
     
     public JButton getButtonAkun(){

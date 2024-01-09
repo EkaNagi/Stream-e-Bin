@@ -4,6 +4,8 @@
  */
 package mitra;
 
+import akun.Akun;
+
 import javax.swing.table.*;
 import java.util.List;
 
@@ -79,5 +81,19 @@ public class MitraTableModel extends AbstractTableModel {
     public void add(Mitra value){
         data.add(value);
         fireTableRowsInserted(data.size() - 1, data.size() - 1);
+    }
+
+    public void removeRow(int row)
+    {
+        data.remove(row);
+        fireTableRowsDeleted(data.size() - 1, data.size()-1);
+    }
+
+    public Mitra getAkunAtRow(int rowIndex) {
+        if (rowIndex >= 0 && rowIndex < data.size()) {
+            return data.get(rowIndex);
+        } else {
+            return null; // Mengembalikan null jika indeks baris tidak valid
+        }
     }
 }
